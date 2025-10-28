@@ -4,7 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7b6abce0-a454-459a-add9-c5ee9b7d616b" name="変更" comment="URL変更" />
+    <list default="true" id="7b6abce0-a454-459a-add9-c5ee9b7d616b" name="変更" comment="URL変更２">
+      <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -92,7 +94,7 @@
       <option name="presentableId" value="Default" />
       <updated>1761617936727</updated>
       <workItem from="1761617937788" duration="15000" />
-      <workItem from="1761619318971" duration="2553000" />
+      <workItem from="1761619318971" duration="2964000" />
     </task>
     <task id="LOCAL-00001" summary="htmlファイル追加">
       <option name="closed" value="true" />
@@ -110,7 +112,15 @@
       <option name="project" value="LOCAL" />
       <updated>1761625391235</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="URL変更２">
+      <option name="closed" value="true" />
+      <created>1761626949604</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1761626949604</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -119,6 +129,7 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="htmlファイル追加" />
     <MESSAGE value="URL変更" />
-    <option name="LAST_COMMIT_MESSAGE" value="URL変更" />
+    <MESSAGE value="URL変更２" />
+    <option name="LAST_COMMIT_MESSAGE" value="URL変更２" />
   </component>
 </project>
