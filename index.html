@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>英文データ収集アプリ</title>
+    <style>
+        /* 見た目を整えるための最小限のCSS */
+        body { font-family: sans-serif; margin: 20px; background-color: #f4f4f4; }
+        .container { max-width: 600px; margin: auto; padding: 20px; background-color: #fff; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        h1 { text-align: center; }
+        textarea { width: 95%; height: 150px; margin-bottom: 10px; padding: 10px; font-size: 16px; border: 1px solid #ccc; }
+        input[type="text"] { width: 95%; padding: 10px; font-size: 16px; margin-bottom: 10px; }
+        button { width: 100%; padding: 12px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; }
+        button:hover { background-color: #0056b3; }
+        #login-section, #main-section { display: none; } /* 初期状態では非表示 */
+        #status-message { text-align: center; margin-top: 15px; color: green; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>英文データ収集</h1>
+
+        <div id="login-section">
+            <h2>参加者IDの入力</h2>
+            <p>研究で使用するID（またはニックネーム）を入力してください。</p>
+            <input type="text" id="student-id-input" placeholder="例: student01">
+            <button id="save-id-button">保存して開始</button>
+        </div>
+
+        <div id="main-section">
+            <h2 id="welcome-message"></h2>
+            <p>分析したい英文を入力してください。</p>
+            <textarea id="input-text" placeholder="ここに英文を入力..."></textarea>
+            <button id="submit-button">この英文を保存する</button>
+            <div id="status-message"></div>
+        </div>
+    </div>
+
+    <script>
+        // --- 定数 ---
+        // ※注意: バックエンドAPIをデプロイしたら、以下のURLを実際のURLに書き換えてください。
+        // (例: 'https://your-api-server.com/api/submit')
+        const API_ENDPOINT = "https://sotsuken-api.onrender.com"; // バックエンドAPIのURL (今はローカル開発用)
+        const STORAGE_KEY = "student_id"; // ローカルストレージに保存するキー名
+
+        // --- 要素の取得 ---
+        const loginSection = document.getElementById("login-section");
+        const mainSection = document.getElementById("main-section");
+        const idInput = document.getElementById("student-id-input");
+        const saveIdButton = document.getElementById("save-id-button");
+        const welcomeMessage = document.getElementById("welcome-message");
+        const inputText = document.getElementById("input-text");
+        const submitButton = document.getElementById("submit-button");
+        const statusMessage = document.getElementById("status-message");
+
+        let currentStudentId = null;
+
+        // --- メイン処理 (ページの読み込み完了時に実行) ---
+        window.addEventListener("load", () => {
+            // 1. ブラウザにIDが保存されているか確認
+            currentStudentId = localStorage.getItem(STORAGE_KEY);
+
+            if (currentStudentId) {
+                // IDがあれば: (B) 英文入力セクションを表示
+                showMainSection(currentStudentId);
+            } else {
+                // IDがなければ: (A) ID入力セクションを表示
+                showLoginSection();
+            }
+        });
+
+        // --- (A) ID入力関連 ---
+        function showLoginSection() {
+            loginSection.style.display = "block";
+        }
+
+        saveIdButton.addEventListener("click", () => {
+            const id = idInput.value.trim(); // 入力値の前後の空白を削除
+            if (id) {
+                // 1. IDをブラウザに保存
+                localStorage.setItem(STORAGE_KEY, id);
+                currentStudentId = id;
+                // 2. (A)を隠し、(B)を表示
+                loginSection.style.display = "none";
+                showMainSection(id);
+            } else {
+                alert("IDを入力してください。");
+            }
+        });
+
+        // --- (B) 英文入力関連 ---
+        function showMainSection(id) {
+            welcomeMessage.textContent = `ようこそ、 ${id} さん`; // 歓迎メッセージ
+            mainSection.style.display = "block";
+        }
+
+        submitButton.addEventListener("click", async () => {
+            const text = inputText.value.trim();
+
+            if (!text) {
+                alert("英文を入力してください。");
+                return;
+            }
+
+            // ボタンを一時的に無効化（二重送信防止）
+            submitButton.disabled = true;
+            submitButton.textContent = "保存中...";
+            statusMessage.textContent = "";
+
+            try {
+                // ★バックエンドAPIにデータを送信★
+                const response = await fetch(API_ENDPOINT, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        student_id: currentStudentId, // 保存されているID
+                        input_text: text              // 入力された英文
+                    })
+                });
+
+                if (response.ok) {
+                    // 成功
+                    statusMessage.textContent = "保存しました！";
+                    inputText.value = ""; // 入力欄をクリア
+                } else {
+                    // サーバー側でエラー
+                    statusMessage.textContent = "エラー: 保存に失敗しました。";
+                }
+
+            } catch (error) {
+                // ネットワークエラーなど
+                console.error("Fetch error:", error);
+                statusMessage.textContent = "エラー: サーバーに接続できません。";
+            } finally {
+                // ボタンを元に戻す
+                submitButton.disabled = false;
+                submitButton.textContent = "この英文を保存する";
+            }
+        });
+    </script>
+</body>
+</html>
